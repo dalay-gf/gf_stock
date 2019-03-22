@@ -6,13 +6,17 @@ define('GF_STOCK_REGION_RU', 'Russia');
 define('GF_STOCK_REGION_CN', 'China');
 define('GF_STOCK_CURRENCY_CN', 'юан');
 define('GF_STOCK_CURRENCY_RU', 'руб');
+define('GF_STOCK_CURRENCY_SYGN', [
+  GF_STOCK_REGION_RU => GF_STOCK_CURRENCY_RU,
+  GF_STOCK_REGION_CN => GF_STOCK_CURRENCY_CN,
+]);
 
 
 /**
  * Переводим в нужную валюту(соответственно настроек) региональные ценники.
  */
 function _gf_stock_convert_to_default_currency($sum, $sum_currency){
-  $default_currency = drupal_strtolower(variable_get('gf_stock_region_price_currency', 
+  $default_currency = drupal_strtolower(variable_get('gf_stock_region_price_currency',
     GF_STOCK_CURRENCY_CN));
   $sum_currency = drupal_strtolower($sum_currency);
   if ($default_currency !== $sum_currency) {
@@ -102,7 +106,7 @@ function gf_stock_importkit_stock($entity, $xml_element){
     if ($entity->guid2) {
       // Наличие guid2 сигнализирует о том, что у товара есть разновидности.
       // Записываем их данные в соответствующее поле.
-      $fields['uc_combination'] = gf_stock_get_uc_combination($entity->nid, 
+      $fields['uc_combination'] = gf_stock_get_uc_combination($entity->nid,
         $entity->guid2);
     }
     db_merge('gf_stock_stocks')
@@ -186,8 +190,8 @@ function gf_stock_node_load($nodes, $types){
           // Если в настройках модуля есть указание конвертировать
           // юани в рубли для китайского склада - делаем.
           $price_value *= variable_get('gf_stock_yuan_exchange_rate', 1);
-          // $price_value = _gf_stock_convert_to_default_currency((double) $price->price, 
-            // $price->currency);
+          // $price_value = _gf_stock_convert_to_default_currency((double) $price->price,
+          // $price->currency);
         }
       }
 
@@ -198,7 +202,7 @@ function gf_stock_node_load($nodes, $types){
 }
 
 /**
- * Функция-хелпер для получения 
+ * Функция-хелпер для получения
  * массива код_цены_региона=>индекс_региона('ru' или 'cn').
  */
 function _gf_stock_get_region_price_map(){
@@ -323,7 +327,7 @@ function gf_stock_block_contents($block) {
     $current_region = gf_stock_get_current_region();
 
     foreach(array_keys(gf_stock_get_regions()) as $region) {
-      $region_data = ($current_region === $region) ? t($region) : 
+      $region_data = ($current_region === $region) ? t($region) :
         l(t($region), $region_switch_path . '/' . $region, $link_options);
       $regions[$region] = $region_data;
     }
@@ -387,7 +391,7 @@ function _gf_stock_get_yuan_exchange_rate() {
     return;
   }
   return array(
-    'rate' => $rate, 
+    'rate' => $rate,
     'date' => $date
   );
 }
@@ -540,7 +544,7 @@ function gf_stock_get_uc_combination($nid, $guid2) {
 
 /**
  * Implements hook_uc_form_alter().
- * 
+ *
  * Изменяем форму добавления товара в корзину для отображения
  * остатков по каждому атрибуту(guid2), если таковые имеются.
  */
@@ -552,7 +556,7 @@ function gf_stock_uc_form_alter(&$form, &$form_state, $form_id) {
       $stock_by_attr = $node->gf_region_stock_by_attr[$region];
       foreach ($stock_by_attr as $aid => $oids) {
         foreach ($oids as $oid => $stock) {
-          $node->attributes[$aid]->options[$oid]->name .= t(' (stock: !stock)', 
+          $node->attributes[$aid]->options[$oid]->name .= t(' (stock: !stock)',
             ['!stock'=>$stock]);
         }
       }
