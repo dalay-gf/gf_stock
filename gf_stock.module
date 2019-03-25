@@ -260,7 +260,8 @@ function gf_stock_get_regions() {
  */
 function gf_stock_region_switch($region=''){
   if(uc_cart_get_contents()) {
-    drupal_set_message(t('You cannot change the warehouse region because there are already goods from another regional warehouse in your cart.'), 'warning');
+    drupal_set_message(t('You cannot change the warehouse region because there are already goods from another regional warehouse in your !cart. You need remove items from the cart or !checkout.', 
+      ['!cart' => l(t('cart'), 'cart'), '!checkout' => l(t('checkout an order'), 'cart')]), 'warning');
   }
   else {
     if ($region) {
