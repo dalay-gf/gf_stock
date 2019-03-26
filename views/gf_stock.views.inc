@@ -67,10 +67,16 @@ function gf_stock_views_data(){
   $data['gf_stock_prices']['price'] = [
     'title' => t('Region Price'),
     'help' => t('Price for a specific region.'),
-    'field' => array(
+    'field' => [
       'handler' => 'gf_stock_handler_field_region_price',
       'click sortable' => TRUE,
-    ),
+    ],
+    'filter' => [
+          'handler' => 'gf_stock_handler_filter_region_price',
+        ],
+    // 'sort' => [
+    //   'handler' => 'gf_stock_handler_sort_stock',
+    // ]
   ];
 
   return $data;
