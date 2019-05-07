@@ -344,8 +344,16 @@ function gf_stock_block_contents($block) {
  * Возврат текущего региона пользователя.
  */
 function gf_stock_get_current_region() {
+  global $language;
   $default_region = variable_get('gf_stock_default_region', GF_STOCK_REGION_RU);
-  return isset($_SESSION['gf_stock_region']) ? $_SESSION['gf_stock_region'] : $default_region;
+  if (isset($_SESSION['gf_stock_region'])) {
+    return $_SESSION['gf_stock_region'];
+  }
+  elseif ($language->language != 'ru') {
+    // Если выбран не русский - склад по дефолту - Китай.
+    return GF_STOCK_REGION_CN;
+  }
+  return $default_region;
 }
 
 
